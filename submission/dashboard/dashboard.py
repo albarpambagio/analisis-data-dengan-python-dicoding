@@ -3,9 +3,9 @@ import altair as alt
 import pandas as pd
 
 # Load data
-df_ct = pd.read_excel('dashboard\brazilian_ecommerce_data.xlsx', sheet_name='customers')
-df_od = pd.read_excel('dashboard\brazilian_ecommerce_data.xlsx', sheet_name='orders')
-df_pm = pd.read_excel('dashboard\brazilian_ecommerce_data.xlsx', sheet_name='payments')
+df_ct = pd.read_excel(r'dashboard\brazilian_ecommerce_data.xlsx', sheet_name='customers')
+df_od = pd.read_excel(r'dashboard\brazilian_ecommerce_data.xlsx', sheet_name='orders')
+df_pm = pd.read_excel(r'dashboard\brazilian_ecommerce_data.xlsx', sheet_name='payments')
 
 # Merge orders with customer info to get city
 merged_df = df_od.merge(df_ct[['customer_id', 'customer_city']], on='customer_id', how='left')
