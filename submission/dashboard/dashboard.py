@@ -1,11 +1,19 @@
 import streamlit as st
 import altair as alt
 import pandas as pd
+from pathlib import Path
 
-# Load data
-df_ct = pd.read_excel(r'dashboard\brazilian_ecommerce_data.xlsx', sheet_name='customers')
-df_od = pd.read_excel(r'dashboard\brazilian_ecommerce_data.xlsx', sheet_name='orders')
-df_pm = pd.read_excel(r'dashboard\brazilian_ecommerce_data.xlsx', sheet_name='payments')
+# Define base path (one level above the script's location)
+base_path = Path(__file__).parents[1]
+
+# Path to the Excel file
+excel_path = base_path / 'dashboard' / 'brazilian_ecommerce_data.xlsx'
+
+# Load each sheet
+df_ct = pd.read_excel(excel_path, sheet_name='customers')
+df_od = pd.read_excel(excel_path, sheet_name='orders')
+df_pm = pd.read_excel(excel_path, sheet_name='payments')
+
 
 # Merge orders with customer info to get city
 merged_df = df_od.merge(df_ct[['customer_id', 'customer_city']], on='customer_id', how='left')
