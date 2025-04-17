@@ -8,13 +8,14 @@ base_path = Path(__file__).parents[1]
  
 # Path to the csv files
 csv_path_ct = base_path / 'data' / 'olist_customers_dataset.csv'
-csv_path_od = base_path / 'data' / 'olist_order_payments_dataset.csv'
-csv_path_pm = base_path / 'data' / 'olist_orders_dataset.csv'
+csv_path_od = base_path / 'data' / 'olist_orders_dataset.csv'
+csv_path_pm = base_path / 'data' / 'olist_order_payments_dataset.csv'
+
 
 # Load each sheet
-df_ct = pd.read_excel(csv_path_ct)
-df_od = pd.read_excel(csv_path_od)
-df_pm = pd.read_excel(csv_path_pm)
+df_ct = pd.read_csv(csv_path_ct)
+df_od = pd.read_csv(csv_path_od)
+df_pm = pd.read_csv(csv_path_pm)
 
 
 # Merge orders with customer info to get city
