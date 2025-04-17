@@ -1,0 +1,47 @@
+import streamlit as st
+import plotly.express as px
+import pandas as pd
+
+# Load data
+df_ct = pd.read_excel('dashboard/brazilian_ecommerce_data.xlsx', sheet_name='customers')
+df_od = pd.read_excel('dashboard/brazilian_ecommerce_data.xlsx', sheet_name='orders')
+df_pm = pd.read_excel('dashboard/brazilian_ecommerce_data.xlsx', sheet_name='payments')
+
+# Merge orders with customer info to get city
+merged_df = df_od.merge(df_ct[['customer_id', 'customer_city']], on='customer_id', how='left')
+
+# --- Plot 1: Top 5 Cities by Order Count ---
+order_count = merged_df.groupby('customer_city')['order_delivered_customer_date'].count().reset_index()
+order_count.rename(columns={'order_delivered_customer_date': 'order_count'}, inplace=True)
+top_5_order_count = order_count.nlargest(5, 'order_count')
+
+fig1 = px.bar(top_5_order_count,
+              x='customer_city',
+              y='order_count',
+              title="Top 5 Cities by Order Count",
+              labels={'order_count': 'Order Count', 'customer_city': 'Customer City'},
+              color='customer_city')
+
+# --- Plot 2: Top 5 Cities by Payment Value ---
+merged_with_payment = merged_df.merge(df_pm[['order_id', 'payment_value']], on='order_id', how='left')
+payment_by_city = merged_with_payment.groupby('customer_city')['payment_value'].sum().reset_index()
+top_5_payment_by_city = payment_by_city.nlargest(5, 'payment_value')
+
+fig2 = px.bar(top_5_payment_by_city,
+              x='customer_city',
+              y='payment_value',
+              title="Top 5 Cities by Payment Value",
+              labels={'payment_value': 'Payment Value', 'customer_city': 'Customer City'},
+              color='customer_city')
+
+# --- Streamlit Layout ---
+st.set_page_config(layout="wide")
+st.title("Dashboard: Orders & Payments by City")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.plotly_chart(fig1, use_container_width=True)
+
+with col2:
+    st.plotly_chart(fig2, use_container_width=True)
