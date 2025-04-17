@@ -1,5 +1,5 @@
 import streamlit as st
-import plotly.express as px
+import altair as alt
 import pandas as pd
 
 # Load data
@@ -15,24 +15,28 @@ order_count = merged_df.groupby('customer_city')['order_delivered_customer_date'
 order_count.rename(columns={'order_delivered_customer_date': 'order_count'}, inplace=True)
 top_5_order_count = order_count.nlargest(5, 'order_count')
 
-fig1 = px.bar(top_5_order_count,
-              x='customer_city',
-              y='order_count',
-              title="Top 5 Cities by Order Count",
-              labels={'order_count': 'Order Count', 'customer_city': 'Customer City'},
-              color='customer_city')
+
+fig1 = alt.Chart(top_5_order_count).mark_bar().encode(
+    x=alt.X('customer_city:N', title='Customer City', sort='-y'),
+    y=alt.Y('order_count:Q', title='Order Count'),
+    color=alt.Color('customer_city:N', legend=None)
+).properties(
+    title='Top 5 Cities by Order Count'
+)
 
 # --- Plot 2: Top 5 Cities by Payment Value ---
 merged_with_payment = merged_df.merge(df_pm[['order_id', 'payment_value']], on='order_id', how='left')
 payment_by_city = merged_with_payment.groupby('customer_city')['payment_value'].sum().reset_index()
 top_5_payment_by_city = payment_by_city.nlargest(5, 'payment_value')
 
-fig2 = px.bar(top_5_payment_by_city,
-              x='customer_city',
-              y='payment_value',
-              title="Top 5 Cities by Payment Value",
-              labels={'payment_value': 'Payment Value', 'customer_city': 'Customer City'},
-              color='customer_city')
+fig2 = alt.Chart(top_5_payment_by_city).mark_bar().encode(
+    x=alt.X('customer_city:N', title='Customer City', sort='-y'),
+    y=alt.Y('payment_value:Q', title='Payment Value'),
+    color=alt.Color('customer_city:N', legend=None)
+).properties(
+    title='Top 5 Cities by Payment Value'
+)
+
 
 # --- Streamlit Layout ---
 st.set_page_config(layout="wide")
@@ -41,7 +45,9 @@ st.title("Dashboard: Orders & Payments by City")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.plotly_chart(fig1, use_container_width=True)
+    st.altair_chart(fig1, use_container_width=True)
 
 with col2:
-    st.plotly_chart(fig2, use_container_width=True)
+    st.altair_chart(fig2, use_container_width=True)
+
+

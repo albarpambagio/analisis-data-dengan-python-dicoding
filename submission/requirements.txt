@@ -2,3 +2,4 @@ pandas
 streamlit
 plotly==5.24.1
 openpyxl
+altair
